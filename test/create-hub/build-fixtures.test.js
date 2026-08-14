@@ -4,9 +4,9 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawn } from "node:child_process";
 import test from "node:test";
-import { createHubFromConfig } from "../dist/index.js";
+import { createHubFromConfig } from "../../dist/index.js";
 
-const cliRoot = fileURLToPath(new URL("..", import.meta.url));
+const cliRoot = fileURLToPath(new URL("../..", import.meta.url));
 const workspaceRoot = dirname(cliRoot);
 const fixturesRoot = join(cliRoot, ".tmp/fixtures");
 

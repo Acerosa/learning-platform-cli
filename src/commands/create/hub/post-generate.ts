@@ -1,8 +1,8 @@
 import { spawn } from "node:child_process";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
-import { PACKAGE_BASELINE } from "../baselines.js";
-import type { ResolvedHubConfig } from "../config/types.js";
+import { PACKAGE_BASELINE } from "../../../shared/baselines.js";
+import type { ResolvedHubConfig } from "./config.js";
 
 export async function validateGeneratedHub(
   config: ResolvedHubConfig,

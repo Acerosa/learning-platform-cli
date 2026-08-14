@@ -1,4 +1,4 @@
-import type { ResolvedHubConfig } from "../config/types.js";
+import type { ResolvedHubConfig } from "../config.js";
 
 export type HubRoute = {
   id: string;

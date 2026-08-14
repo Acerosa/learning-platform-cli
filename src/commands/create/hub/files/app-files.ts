@@ -1,5 +1,5 @@
-import { CONTRACT_BASELINE, PACKAGE_BASELINE, SPAWNER_VERSION } from "../baselines.js";
-import type { ResolvedHubConfig } from "../config/types.js";
+import { CLI_VERSION, CONTRACT_BASELINE, PACKAGE_BASELINE } from "../../../../shared/baselines.js";
+import type { ResolvedHubConfig } from "../config.js";
 import { contentPackageDir, hubRoutes, navigationRoutes } from "./routes.js";
 
 export function htmlPage(config: ResolvedHubConfig, route: ReturnType<typeof hubRoutes>[number]): string {
@@ -71,18 +71,34 @@ export function hubManifest(config: ResolvedHubConfig): string {
 
 export function provenance(config: ResolvedHubConfig): string {
   return `${JSON.stringify({
-    spawner: {
-      package: "@learning-platform/cli",
-      version: SPAWNER_VERSION
-    },
+    generator: "@learning-platform/cli",
+    generatorVersion: CLI_VERSION,
+    coreVersion: config.coreVersion,
+    uiVersion: config.uiVersion,
+    contentVersion: config.useContentEngine ? config.contentVersion : null,
     profile: config.profile,
     contextType: config.contextType,
     useContentEngine: config.useContentEngine,
     packages: {
-      core: { name: PACKAGE_BASELINE.core.name, version: config.coreVersion, tag: PACKAGE_BASELINE.core.tag },
-      ui: { name: PACKAGE_BASELINE.ui.name, version: config.uiVersion, tag: PACKAGE_BASELINE.ui.tag },
+      core: {
+        name: PACKAGE_BASELINE.core.name,
+        version: config.coreVersion,
+        repository: PACKAGE_BASELINE.core.repository,
+        tag: PACKAGE_BASELINE.core.tag
+      },
+      ui: {
+        name: PACKAGE_BASELINE.ui.name,
+        version: config.uiVersion,
+        repository: PACKAGE_BASELINE.ui.repository,
+        tag: PACKAGE_BASELINE.ui.tag
+      },
       content: config.useContentEngine
-        ? { name: PACKAGE_BASELINE.content.name, version: config.contentVersion, tag: PACKAGE_BASELINE.content.tag }
+        ? {
+          name: PACKAGE_BASELINE.content.name,
+          version: config.contentVersion,
+          repository: PACKAGE_BASELINE.content.repository,
+          tag: PACKAGE_BASELINE.content.tag
+        }
         : null
     },
     dependencyStrategy: "file-siblings",

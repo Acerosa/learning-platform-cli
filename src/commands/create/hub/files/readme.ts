@@ -1,4 +1,4 @@
-import type { ResolvedHubConfig } from "../config/types.js";
+import type { ResolvedHubConfig } from "../config.js";
 
 export function hubReadme(config: ResolvedHubConfig): string {
   return `# ${config.displayName}
@@ -45,7 +45,7 @@ To upgrade later, change the pinned tags in \`.github/workflows/pages.yml\` and 
 6. Register \`learning-platform-hub.json\` in Admin. The CLI never writes to hosted Supabase.
 7. Author curriculum. Do not copy another hub's teaching content.
 
-## What this spawner does not generate
+## What this CLI does not generate
 
 - real weeks, tasks, questions or assessments
 - hosted Supabase records

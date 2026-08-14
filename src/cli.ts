@@ -1,23 +1,14 @@
 #!/usr/bin/env node
-import { ConfigError } from "./config/validate.js";
-import { createHub } from "./commands/create-hub.js";
+import { ConfigError } from "./commands/create/hub/validate.js";
+import { createHub } from "./commands/create/hub/command.js";
+import { hasFlag, optionValue } from "./shared/args.js";
 
 const args = process.argv.slice(2);
-
-function flag(name: string): boolean {
-  return args.includes(name);
-}
-
-function option(name: string): string | undefined {
-  const index = args.indexOf(name);
-  if (index === -1) return undefined;
-  return args[index + 1];
-}
 
 function printHelp(): void {
   console.log(`Learning Platform CLI
 
-Usage:
+Current command:
   lp create hub
   lp create hub --config hub.json
   lp create hub --config hub.json --out ./unit-99-example --force
@@ -29,21 +20,23 @@ Options:
   --force                  Overwrite generated files in a non-empty directory
   --skip-install           Skip npm install/typecheck/test after generation
   --help                   Show this help
+
+This repository is platform developer tooling. It is not a hub-spawner-only package.
 `);
 }
 
 async function main(): Promise<void> {
-  if (args.length === 0 || flag("--help") || args[0] === "help") {
+  if (args.length === 0 || hasFlag(args, "--help") || args[0] === "help") {
     printHelp();
     return;
   }
   if (args[0] === "create" && args[1] === "hub") {
     const result = await createHub({
-      configPath: option("--config"),
-      outputDir: option("--out"),
-      workspaceRoot: option("--workspace-root"),
-      force: flag("--force"),
-      skipInstall: flag("--skip-install")
+      configPath: optionValue(args, "--config"),
+      outputDir: optionValue(args, "--out"),
+      workspaceRoot: optionValue(args, "--workspace-root"),
+      force: hasFlag(args, "--force"),
+      skipInstall: hasFlag(args, "--skip-install")
     });
     console.log(`Created hub at ${result.outputDir} (${result.written.length} files).`);
     return;

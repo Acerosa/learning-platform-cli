@@ -1,7 +1,7 @@
 import { createInterface } from "node:readline/promises";
 import { stdin as input, stdout as output } from "node:process";
-import { CONTEXT_TYPES, DEFAULT_BRANDING, KNOWN_COURSE_KEYS, PROFILES } from "./baselines.js";
-import type { HubCreateConfig } from "./config/types.js";
+import { CONTEXT_TYPES, DEFAULT_BRANDING, KNOWN_COURSE_KEYS, PROFILES } from "../../../shared/baselines.js";
+import type { HubCreateConfig } from "./config.js";
 
 export async function promptHubConfig(): Promise<HubCreateConfig> {
   const rl = createInterface({ input, output });

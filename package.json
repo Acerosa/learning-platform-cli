@@ -1,26 +1,31 @@
 {
   "name": "@learning-platform/cli",
   "version": "0.1.0",
-  "description": "Scaffold Learning Platform learner hubs from the shared React + Vite baseline.",
+  "description": "Learning Platform developer CLI. Current command: lp create hub.",
   "license": "MIT",
   "type": "module",
   "bin": {
     "lp": "./dist/cli.js"
   },
   "exports": {
-    ".": "./dist/index.js"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
   },
+  "types": "./dist/index.d.ts",
   "files": [
     "dist",
     "schemas",
     "docs",
     "examples",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "prepare": "npm run build",
-    "test": "npm run build && node --test --test-reporter=spec test/*.test.js",
+    "test": "npm run build && node --test --test-reporter=spec test/**/*.test.js",
     "check": "npm test"
   },
   "engines": {

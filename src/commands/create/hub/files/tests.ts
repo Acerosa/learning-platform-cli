@@ -1,4 +1,5 @@
-import type { ResolvedHubConfig } from "../config/types.js";
+import { CLI_VERSION } from "../../../../shared/baselines.js";
+import type { ResolvedHubConfig } from "../config.js";
 import { hubRoutes, navigationRoutes } from "./routes.js";
 
 export function generatedTests(config: ResolvedHubConfig): Record<string, string> {
@@ -108,8 +109,13 @@ test("hub config matches the canonical manifest", function () {
   assert.equal(manifest.compatibility.required.coreVersion, ${JSON.stringify(config.coreVersion)});
   assert.match(config, /hubId: ${JSON.stringify(config.hubId)}/);
   assert.equal(manifest.certification.status, "not-certified");
-  assert.equal(provenance.packages.ui.version, ${JSON.stringify(config.uiVersion)});
+  assert.equal(provenance.generator, "@learning-platform/cli");
+  assert.equal(provenance.generatorVersion, ${JSON.stringify(CLI_VERSION)});
+  assert.equal(provenance.coreVersion, ${JSON.stringify(config.coreVersion)});
+  assert.equal(provenance.uiVersion, ${JSON.stringify(config.uiVersion)});
+  assert.equal(provenance.contentVersion, ${config.useContentEngine ? JSON.stringify(config.contentVersion) : "null"});
   assert.equal(provenance.useContentEngine, ${config.useContentEngine ? "true" : "false"});
+  assert.equal(provenance.packages.core.tag, ${JSON.stringify("v" + config.coreVersion)});
 });
 `;
 }

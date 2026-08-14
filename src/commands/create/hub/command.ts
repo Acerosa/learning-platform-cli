@@ -1,9 +1,9 @@
 import { readFile } from "node:fs/promises";
-import { parseConfigInput, resolveHubConfig } from "../config/validate.js";
-import { buildHubFiles, writeHubFiles } from "../generate/hub.js";
-import { validateGeneratedHub } from "../generate/validate-output.js";
-import { promptHubConfig } from "../prompts.js";
-import type { HubCreateConfig } from "../config/types.js";
+import { parseConfigInput, resolveHubConfig } from "./validate.js";
+import { buildHubFiles, writeHubFiles } from "./generate.js";
+import { validateGeneratedHub } from "./post-generate.js";
+import { promptHubConfig } from "./prompts.js";
+import type { HubCreateConfig } from "./config.js";
 
 export type CreateHubOptions = {
   configPath?: string;

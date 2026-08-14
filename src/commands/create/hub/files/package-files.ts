@@ -1,6 +1,6 @@
 import { relative, resolve } from "node:path";
-import { PACKAGE_BASELINE } from "../baselines.js";
-import type { ResolvedHubConfig } from "../config/types.js";
+import { PACKAGE_BASELINE } from "../../../../shared/baselines.js";
+import type { ResolvedHubConfig } from "../config.js";
 
 export function posixRelative(from: string, to: string): string {
   const value = relative(from, to).split("\\").join("/");

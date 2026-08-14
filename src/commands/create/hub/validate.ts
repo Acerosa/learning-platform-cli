@@ -7,8 +7,8 @@ import {
   PACKAGE_BASELINE,
   PROFILES,
   SHARED_SUPABASE
-} from "../baselines.js";
-import type { Diagnostic, HubCreateConfig, ResolvedHubConfig } from "./types.js";
+} from "../../../shared/baselines.js";
+import type { Diagnostic, HubCreateConfig, ResolvedHubConfig } from "./config.js";
 
 const STABLE_KEY = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const SEMVER = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/;
@@ -71,8 +71,8 @@ export function resolveHubConfig(
   }
 
   const repositoryName = asString(input.repositoryName) || hubId;
-  if (repositoryName && !REPO_NAME.test(repositoryName)) {
-    add(errors, "error", "LP_INVALID_REPOSITORY_NAME", "/repositoryName", "repositoryName must be GitHub-safe: letters, numbers, dot, underscore or hyphen.");
+  if (repositoryName === "." || repositoryName === ".." || !REPO_NAME.test(repositoryName)) {
+    add(errors, "error", "LP_INVALID_REPOSITORY_NAME", "/repositoryName", "repositoryName must be GitHub-safe: letters, numbers, dot, underscore or hyphen, and must not be '.' or '..'.");
   }
 
   const version = asString(input.version) || "0.1.0";

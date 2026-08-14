@@ -1,12 +1,12 @@
 import assert from "node:assert/strict";
-import { mkdtemp, readFile, rm } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { dirname, join } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
-import { ConfigError, createHubFromConfig, resolveHubConfig } from "../dist/index.js";
+import { ConfigError, createHubFromConfig, resolveHubConfig, resolveInside } from "../../dist/index.js";
 
-const cliRoot = fileURLToPath(new URL("..", import.meta.url));
+const cliRoot = fileURLToPath(new URL("../..", import.meta.url));
 const workspaceRoot = dirname(cliRoot);
 
 test("rejects invalid hub ids and unknown profiles", () => {
@@ -104,11 +104,20 @@ test("scaffolds minimal, week-based and task-based hubs", async (t) => {
     });
     const pkg = JSON.parse(await readFile(join(result.outputDir, "package.json"), "utf8"));
     const manifest = JSON.parse(await readFile(join(result.outputDir, "learning-platform-hub.json"), "utf8"));
+    const provenance = JSON.parse(await readFile(join(result.outputDir, "docs/provenance.json"), "utf8"));
     const source = await readFile(join(result.outputDir, "src/platform.ts"), "utf8");
     const home = await readFile(join(result.outputDir, "index.html"), "utf8");
 
     assert.equal(manifest.hubId, fixture.config.hubId);
     assert.equal(manifest.compatibility.required.coreVersion, "0.2.0");
+    assert.equal(manifest.compatibility.required.uiVersion, undefined);
+    assert.equal(provenance.generator, "@learning-platform/cli");
+    assert.equal(provenance.generatorVersion, "0.1.0");
+    assert.equal(provenance.coreVersion, "0.2.0");
+    assert.equal(provenance.uiVersion, "0.1.0");
+    assert.equal(provenance.contentVersion, fixture.config.useContentEngine ? "0.1.0" : null);
+    assert.equal(provenance.packages.core.repository, "Acerosa/learning-platform-core");
+    assert.equal(provenance.packages.ui.tag, "v0.1.0");
     assert.match(pkg.dependencies["@learning-platform/core"], /learning-platform-core/);
     assert.match(pkg.dependencies["@learning-platform/ui"], /learning-platform-ui/);
     assert.equal(Boolean(pkg.dependencies["@learning-platform/content"]), fixture.config.useContentEngine);
@@ -146,4 +155,53 @@ test("does not overwrite a non-empty destination without --force", async (t) => 
     profile: "minimal",
     useContentEngine: false
   }, { cwd: parent, outputDir, workspaceRoot, skipInstall: true }), /LP_TARGET_EXISTS/);
+});
+
+test("--force overwrites generated files and keeps extra user files", async (t) => {
+  const parent = await mkdtemp(join(tmpdir(), "lp-cli-force-"));
+  t.after(() => rm(parent, { recursive: true, force: true }));
+  const outputDir = join(parent, "existing");
+  await createHubFromConfig({
+    hubId: "fixture-force",
+    displayName: "Fixture Force",
+    courseKey: "ocr-level-3-it",
+    profile: "minimal",
+    useContentEngine: false
+  }, { cwd: parent, outputDir, workspaceRoot, skipInstall: true });
+
+  const extraPath = join(outputDir, "notes", "keep-me.txt");
+  await mkdir(join(outputDir, "notes"), { recursive: true });
+  await writeFile(join(outputDir, "README.md"), "user-edited-readme\n", "utf8");
+  await writeFile(extraPath, "keep this extra file\n", "utf8");
+
+  await createHubFromConfig({
+    hubId: "fixture-force",
+    displayName: "Fixture Force Updated",
+    courseKey: "ocr-level-3-it",
+    profile: "minimal",
+    useContentEngine: false
+  }, { cwd: parent, outputDir, workspaceRoot, skipInstall: true, force: true });
+
+  assert.equal(await readFile(extraPath, "utf8"), "keep this extra file\n");
+  assert.match(await readFile(join(outputDir, "README.md"), "utf8"), /Fixture Force Updated/);
+  assert.doesNotMatch(await readFile(join(outputDir, "README.md"), "utf8"), /user-edited-readme/);
+});
+
+test("generated relative paths cannot escape the destination", () => {
+  const dest = resolve(join(tmpdir(), "lp-cli-dest"));
+  assert.throws(() => resolveInside(dest, "../outside.txt"), /LP_PATH_ESCAPE/);
+  assert.throws(() => resolveInside(dest, "ok/../../outside.txt"), /LP_PATH_ESCAPE/);
+  assert.throws(() => resolveInside(dest, "ok/\0secret"), /LP_PATH_ESCAPE/);
+  assert.equal(resolveInside(dest, "docs/provenance.json"), join(dest, "docs/provenance.json"));
+});
+
+test("rejects path-like repository names", () => {
+  assert.throws(() => resolveHubConfig({
+    hubId: "unit-99-example",
+    displayName: "Example",
+    courseKey: "ocr-level-3-it",
+    profile: "minimal",
+    useContentEngine: false,
+    repositoryName: ".."
+  }), /LP_INVALID_REPOSITORY_NAME/);
 });

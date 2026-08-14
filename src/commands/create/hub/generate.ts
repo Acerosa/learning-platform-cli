@@ -1,7 +1,8 @@
 import { mkdir, readdir, readFile, stat, writeFile } from "node:fs/promises";
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
-import type { ResolvedHubConfig } from "../config/types.js";
+import { dirname } from "node:path";
+import type { ResolvedHubConfig } from "./config.js";
+import { packageRoot } from "../../../shared/package-root.js";
+import { resolveInside } from "../../../shared/paths.js";
 import {
   appConfig,
   globalsSource,
@@ -17,14 +18,14 @@ import {
   supabaseConfig,
   themeBootstrapSource,
   useHubPlatformSource
-} from "./app-files.js";
-import { githubProtectionDoc, githubWorkflow } from "./ci.js";
-import { contentFiles } from "./content.js";
-import { gitignore, packageJson, tsconfigJson, viteConfig, vitestConfig } from "./package-files.js";
-import { appSource, pageCopySource, pagesSource } from "./pages.js";
-import { hubReadme } from "./readme.js";
-import { hubRoutes } from "./routes.js";
-import { generatedTests } from "./tests.js";
+} from "./files/app-files.js";
+import { githubProtectionDoc, githubWorkflow } from "./files/ci.js";
+import { contentFiles } from "./files/content.js";
+import { gitignore, packageJson, tsconfigJson, viteConfig, vitestConfig } from "./files/package-files.js";
+import { appSource, pageCopySource, pagesSource } from "./files/pages.js";
+import { hubReadme } from "./files/readme.js";
+import { hubRoutes } from "./files/routes.js";
+import { generatedTests } from "./files/tests.js";
 
 export type FileMap = Record<string, string>;
 
@@ -84,26 +85,22 @@ export async function writeHubFiles(
 
   const written: string[] = [];
   for (const [relativePath, contents] of Object.entries(files)) {
-    const full = join(dest, relativePath);
+    const full = resolveInside(dest, relativePath);
     await mkdir(dirname(full), { recursive: true });
     await writeFile(full, contents, "utf8");
     written.push(relativePath);
   }
 
-  const schemaSource = join(cliRoot(), "schemas/learning-platform-hub.schema.json");
+  const schemaSource = resolveInside(packageRoot(), "schemas/learning-platform-hub.schema.json");
   if (await pathExists(schemaSource)) {
     const schema = await readFile(schemaSource, "utf8");
-    const schemaDest = join(dest, "schemas/learning-platform-hub.schema.json");
+    const schemaDest = resolveInside(dest, "schemas/learning-platform-hub.schema.json");
     await mkdir(dirname(schemaDest), { recursive: true });
     await writeFile(schemaDest, schema, "utf8");
     written.push("schemas/learning-platform-hub.schema.json");
   }
 
   return { written, skippedExisting: [] };
-}
-
-function cliRoot(): string {
-  return join(dirname(fileURLToPath(import.meta.url)), "../..");
 }
 
 async function pathExists(path: string): Promise<boolean> {

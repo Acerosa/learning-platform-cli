@@ -1,5 +1,5 @@
-import { PACKAGE_BASELINE } from "../baselines.js";
-import type { ResolvedHubConfig } from "../config/types.js";
+import { PACKAGE_BASELINE } from "../../../../shared/baselines.js";
+import type { ResolvedHubConfig } from "../config.js";
 
 export function githubWorkflow(config: ResolvedHubConfig): string {
   const contentCheckout = config.useContentEngine

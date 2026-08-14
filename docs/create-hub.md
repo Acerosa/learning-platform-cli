@@ -32,11 +32,10 @@ example-hub/
 ├── .github/workflows/pages.yml
 ├── src/
 ├── css/hub.css
-├── public/            # not used; Vite MPA HTML lives at real routes
 ├── resources/
 ├── help/
 ├── account/
-├── tests/             # node tests live in test/
+├── test/
 ├── learning-platform-hub.json
 ├── docs/provenance.json
 ├── package.json
@@ -46,6 +45,22 @@ example-hub/
 ```
 
 Vite collects every `index.html` as an MPA input with `base: "./"`. Nested refresh uses real directories, not hash routing.
+
+## Provenance
+
+Generated hubs record generator provenance in `docs/provenance.json`:
+
+```json
+{
+  "generator": "@learning-platform/cli",
+  "generatorVersion": "0.1.0",
+  "coreVersion": "0.2.0",
+  "uiVersion": "0.1.0",
+  "contentVersion": "0.1.0"
+}
+```
+
+`contentVersion` is `null` when Content is not selected. Source repositories and reviewed tags are also recorded under `packages`. Those fields are not added to `learning-platform-hub.json`.
 
 ## Manifest / Admin
 
@@ -59,24 +74,22 @@ generated manifest → Admin Hub Registration → admin_api.register_hub
 
 The CLI never writes to hosted Supabase.
 
-UI and Content versions are recorded in `docs/provenance.json` because they are not part of the current manifest schema.
+## CI / Pages (generated hubs)
 
-## CI / Pages
-
-The workflow matches the reviewed T Level / Unit 3 Actions majors:
+The generated hub workflow matches the reviewed T Level / Unit 3 Actions majors:
 
 - checkout hub, Core `v0.2.0`, UI `v0.1.0`, optional Content `v0.1.0`
 - Node 22
 - `npm ci` and `npm test` (typecheck, unit tests, Vite build, post-build route checks)
 - deploy `dist` from `main` only
 
-The CLI does not deploy.
+This CLI repository does not deploy Pages.
 
 ## Branch protection
 
 Not applied during `create hub`. See the generated `docs/github-protection.md`.
 
-## What the spawner does not generate
+## What `lp create hub` does not generate
 
 - real curriculum, questions or assessments
 - hosted database records
