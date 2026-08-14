@@ -1,0 +1,12 @@
+{
+  "hubId": "unit-99-example-minimal",
+  "displayName": "Unit 99 Example Minimal",
+  "courseKey": "ocr-level-3-it",
+  "profile": "minimal",
+  "contextType": "none",
+  "useContentEngine": false,
+  "branding": {
+    "primary": "#123456",
+    "accent": "#abcdef"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "hubId": "unit-99-example-tasks",
+  "displayName": "Unit 99 Example Tasks",
+  "courseKey": "t-level-digital-software-development",
+  "profile": "task-based",
+  "contextType": "none",
+  "useContentEngine": false,
+  "branding": {
+    "primary": "#006477",
+    "accent": "#00839a"
+  }
+}
