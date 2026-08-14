@@ -1,4 +1,4 @@
-import { CONTEXT_TYPES, PROFILES } from "../baselines.js";
+import { CONTEXT_TYPES, PROFILES } from "../../../shared/baselines.js";
 
 export type HubProfile = (typeof PROFILES)[number];
 export type ContextType = (typeof CONTEXT_TYPES)[number];

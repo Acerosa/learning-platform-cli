@@ -1,0 +1,12 @@
+{
+  "hubId": "unit-99-example-weeks",
+  "displayName": "Unit 99 Example Weeks",
+  "courseKey": "ocr-level-3-it",
+  "profile": "week-based",
+  "contextType": "assignment",
+  "useContentEngine": true,
+  "branding": {
+    "primary": "#1e3a5f",
+    "accent": "#2a7a62"
+  }
+}
