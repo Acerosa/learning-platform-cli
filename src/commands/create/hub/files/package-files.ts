@@ -33,12 +33,16 @@ export function packageJson(config: ResolvedHubConfig): string {
       build: "vite build",
       preview: "vite preview",
       typecheck: "tsc --noEmit",
-      test: "npm run test:node && npm run test:app && npm run build && node --test test/post-build/build.test.js",
+      test: "npm run test:node && npm run test:app && npm run check:hub-security && npm run build && node --test test/post-build/build.test.js",
       "test:node": "node --test test/*.test.js",
       "test:app": "vitest run",
+      "check:hub-security": "node ./node_modules/@learning-platform/core/dist/hub-security.mjs",
       check: "npm run typecheck && npm test"
     },
     dependencies,
+    learningPlatform: {
+      securityBaseline: "1.0"
+    },
     devDependencies: {
       "@testing-library/jest-dom": PACKAGE_BASELINE.testingLibraryJestDom,
       "@testing-library/react": PACKAGE_BASELINE.testingLibraryReact,

@@ -52,7 +52,7 @@ learning-platform-content/   # required only when useContentEngine is true
 unit-99-example/
 ```
 
-Reviewed baselines: Core `0.2.0` (`v0.2.0`), UI `0.1.0` (`v0.1.0`), Content `0.1.0` (`v0.1.0`).
+Reviewed baselines: Core `0.2.2` (`v0.2.2`), UI `0.1.0` (`v0.1.0`), Content `0.1.0` (`v0.1.0`).
 
 ## Profiles
 

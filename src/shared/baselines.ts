@@ -3,9 +3,9 @@ export const CLI_VERSION = "0.1.0";
 export const PACKAGE_BASELINE = Object.freeze({
   core: {
     name: "@learning-platform/core",
-    version: "0.2.0",
+    version: "0.2.2",
     repository: "Acerosa/learning-platform-core",
-    tag: "v0.2.0",
+    tag: "v0.2.2",
     directory: "learning-platform-core"
   },
   ui: {
