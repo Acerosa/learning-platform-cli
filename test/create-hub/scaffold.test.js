@@ -109,17 +109,19 @@ test("scaffolds minimal, week-based and task-based hubs", async (t) => {
     const home = await readFile(join(result.outputDir, "index.html"), "utf8");
 
     assert.equal(manifest.hubId, fixture.config.hubId);
-    assert.equal(manifest.compatibility.required.coreVersion, "0.2.0");
+    assert.equal(manifest.compatibility.required.coreVersion, "0.2.2");
     assert.equal(manifest.compatibility.required.uiVersion, undefined);
     assert.equal(provenance.generator, "@learning-platform/cli");
     assert.equal(provenance.generatorVersion, "0.1.0");
-    assert.equal(provenance.coreVersion, "0.2.0");
+    assert.equal(provenance.coreVersion, "0.2.2");
     assert.equal(provenance.uiVersion, "0.1.0");
     assert.equal(provenance.contentVersion, fixture.config.useContentEngine ? "0.1.0" : null);
     assert.equal(provenance.packages.core.repository, "Acerosa/learning-platform-core");
     assert.equal(provenance.packages.ui.tag, "v0.1.0");
     assert.match(pkg.dependencies["@learning-platform/core"], /learning-platform-core/);
     assert.match(pkg.dependencies["@learning-platform/ui"], /learning-platform-ui/);
+    assert.equal(pkg.learningPlatform.securityBaseline, "1.0");
+    assert.match(pkg.scripts["check:hub-security"], /hub-security/);
     assert.equal(Boolean(pkg.dependencies["@learning-platform/content"]), fixture.config.useContentEngine);
     assert.match(source, /createClient/);
     assert.doesNotMatch(source, /platform\.client|client,/);
