@@ -23,22 +23,29 @@ export function packageJson(config: ResolvedHubConfig): string {
     dependencies["@learning-platform/content"] = fileDependency(config, PACKAGE_BASELINE.content.directory);
   }
 
+  const scripts: Record<string, string> = {
+    dev: "vite",
+    build: "vite build",
+    preview: "vite preview",
+    typecheck: "tsc --noEmit",
+    test: config.useContentEngine
+      ? "npm run test:node && npm run test:app && npm run check:hub-security && npm run build && npm run check:learner-bundle && node --test test/post-build/build.test.js"
+      : "npm run test:node && npm run test:app && npm run check:hub-security && npm run build && node --test test/post-build/build.test.js",
+    "test:node": "node --test test/*.test.js",
+    "test:app": "vitest run",
+    "check:hub-security": "node ./node_modules/@learning-platform/core/dist/hub-security.mjs",
+    check: "npm run typecheck && npm test"
+  };
+  if (config.useContentEngine) {
+    scripts["check:learner-bundle"] = "node ./node_modules/@learning-platform/content/scripts/check-learner-bundle.js";
+  }
+
   return `${JSON.stringify({
     name: config.packageName,
     version: config.version,
     private: true,
     engines: { node: ">=20" },
-    scripts: {
-      dev: "vite",
-      build: "vite build",
-      preview: "vite preview",
-      typecheck: "tsc --noEmit",
-      test: "npm run test:node && npm run test:app && npm run check:hub-security && npm run build && node --test test/post-build/build.test.js",
-      "test:node": "node --test test/*.test.js",
-      "test:app": "vitest run",
-      "check:hub-security": "node ./node_modules/@learning-platform/core/dist/hub-security.mjs",
-      check: "npm run typecheck && npm test"
-    },
+    scripts,
     dependencies,
     learningPlatform: {
       securityBaseline: "1.0"
@@ -91,12 +98,20 @@ export default defineConfig({
 }
 
 export function viteConfig(config: ResolvedHubConfig): string {
-  const copyContent = config.useContentEngine
-    ? `      cpSync(resolve(${JSON.stringify(`content/${config.hubId}`)}), resolve(dist, ${JSON.stringify(`content/${config.hubId}`)}), { recursive: true });\n`
+  const contentImports = config.useContentEngine
+    ? `import { copyLearnerSafeTree, learnerSafeContentPlugin } from "@learning-platform/content/learner-safe";\n`
     : "";
+  const fsImports = config.useContentEngine
+    ? `import { readdirSync, statSync, writeFileSync } from "node:fs";\n`
+    : `import { cpSync, readdirSync, statSync, writeFileSync } from "node:fs";\n`;
+  const copyContent = config.useContentEngine
+    ? `      copyLearnerSafeTree(resolve(${JSON.stringify(`content/${config.hubId}`)}), resolve(dist, ${JSON.stringify(`content/${config.hubId}`)}));\n`
+    : "";
+  const plugins = config.useContentEngine
+    ? "[react(), learnerSafeContentPlugin(), pagesAssets()]"
+    : "[react(), pagesAssets()]";
   return `import react from "@vitejs/plugin-react";
-import { cpSync, readdirSync, statSync, writeFileSync } from "node:fs";
-import { join, resolve } from "node:path";
+${contentImports}${fsImports}import { join, resolve } from "node:path";
 import { defineConfig } from "vite";
 
 function collectHtml(directory: string, acc: string[] = []): string[] {
@@ -131,7 +146,7 @@ ${copyContent}      writeFileSync(resolve(dist, ".nojekyll"), "");
 
 export default defineConfig({
   base: "./",
-  plugins: [react(), pagesAssets()],
+  plugins: ${plugins},
   build: {
     sourcemap: true,
     rollupOptions: {

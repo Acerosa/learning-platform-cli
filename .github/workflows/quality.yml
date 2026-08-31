@@ -37,7 +37,7 @@ jobs:
         uses: actions/checkout@v7
         with:
           repository: Acerosa/learning-platform-content
-          ref: v0.1.0
+          ref: v0.1.2
           path: learning-platform-content
 
       - name: Set up Node.js
