@@ -56,7 +56,7 @@ Generated hubs record generator provenance in `docs/provenance.json`:
   "generatorVersion": "0.1.0",
   "coreVersion": "0.2.2",
   "uiVersion": "0.1.0",
-  "contentVersion": "0.1.0"
+  "contentVersion": "0.1.2"
 }
 ```
 
@@ -66,7 +66,7 @@ Generated hubs record generator provenance in `docs/provenance.json`:
 
 `learning-platform-hub.json` follows Hub Manifest 1.0.0. Unknown fields are invalid.
 
-Generated hubs pin Hub Security Baseline v1 in `package.json` and run `npm run check:hub-security` during `npm test`. See `learning-platform-core` `docs/hub-security-baseline-v1.md` for the public guarantees. Do not add security fields to `learning-platform-hub.json`.
+Generated hubs pin Hub Security Baseline v1 in `package.json` and run `npm run check:hub-security` during `npm test`. Hubs that include the content engine also apply the shared learner-safe package transform so learner bundles exclude authoritative marking data. See `learning-platform-core` `docs/hub-security-baseline-v1.md` for the public guarantees. Do not add security fields to `learning-platform-hub.json`.
 
 Registration remains:
 
@@ -80,7 +80,7 @@ The CLI never writes to hosted Supabase.
 
 The generated hub workflow matches the reviewed T Level / Unit 3 Actions majors:
 
-- checkout hub, Core `v0.2.2`, UI `v0.1.0`, optional Content `v0.1.0`
+- checkout hub, Core `v0.2.2`, UI `v0.1.0`, optional Content `v0.1.2`
 - Node 22
 - `npm ci` and `npm test` (typecheck, unit tests, Vite build, post-build route checks)
 - deploy `dist` from `main` only

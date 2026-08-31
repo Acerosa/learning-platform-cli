@@ -17,9 +17,9 @@ export const PACKAGE_BASELINE = Object.freeze({
   },
   content: {
     name: "@learning-platform/content",
-    version: "0.1.0",
+    version: "0.1.2",
     repository: "Acerosa/learning-platform-content",
-    tag: "v0.1.0",
+    tag: "v0.1.2",
     directory: "learning-platform-content"
   },
   supabaseJs: "2.112.3",

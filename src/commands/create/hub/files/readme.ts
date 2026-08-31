@@ -12,6 +12,7 @@ Scaffolded by \`@learning-platform/cli\` as a Learning Platform learner hub.
 - UI: \`${config.uiVersion}\`
 
 This repository contains **platform structure**. It does not contain subject curriculum.
+${config.useContentEngine ? "\nLearner bundles exclude authoritative marking data.\n" : ""}
 
 ## Local development
 
